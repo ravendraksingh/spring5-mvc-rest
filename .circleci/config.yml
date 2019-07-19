@@ -14,7 +14,8 @@ jobs:
       # documented at https://circleci.com/docs/2.0/circleci-images/
       # - image: circleci/postgres:9.4
 
-    working_directory: ~/repo
+    #working_directory: ~/repo
+    working_directory: ~/repo/spring5-mvc-rest
 
     environment:
       # Customize the JVM maximum heap limit
@@ -22,6 +23,17 @@ jobs:
 
     steps:
       - checkout
+      ######################   Ravendra  ########################
+      # setup testing env
+      - setup_remote_docker:
+          docker_layer_caching: true
+            - run:
+                name: Login to DockerHub
+                command: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      #     - run:
+      #          name: Decrpyt Secrets
+      #          command: openssl enc -d -aes-256-ecb -md md5 -in src/main/resources/application-prod.properties.secrets -out src/main/resources/application-prod.properties -k $SECRETS_KEY
+      ###########################################################
 
       # Download and cache dependencies
       - restore_cache:
@@ -37,12 +49,26 @@ jobs:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
 
+      ######################   Ravendra  ########################
+      # package into a jar
+      - run: mvn clean package
+
+      # build and push docker image to docker hub
+      - run: mvn clean compile jib:build -Dimage=ravendraksingh/spring5-mvc-rest:$CIRCLE_BUILD_NUM
+        -
+      # store raw contents of src code
+      - store_artifacts:
+          path: target/classes
+          destination: spring5-mvc-rest
+
+      ###########################################################
+
       # run tests! and gen code coverage
-      - run: mvn integration-test cobertura:cobertura
+      #- run: mvn integration-test cobertura:cobertura
 
       - store_test_results:
           path: target/surefire-reports
 
-      - run:
-          name: Send to CodeCov
-          command: bash <(curl -s https://codecov.io/bash)
+      #- run:
+      #    name: Send to CodeCov
+      #    command: bash <(curl -s https://codecov.io/bash)
