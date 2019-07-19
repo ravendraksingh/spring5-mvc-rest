@@ -8,9 +8,9 @@ jobs:
     docker:
       # specify the version you desire here
       - image: circleci/openjdk:8-jdk
-        environment:
-          DOCKER_USER: ravendraksingh
-          DOCKER_PASS: Pankaj1984
+        #environment:
+        #  DOCKER_USER: ********
+        #  DOCKER_PASS: ********
 
 
       # Specify service dependencies here if necessary
@@ -29,11 +29,11 @@ jobs:
       - checkout
       ######################   Ravendra  ########################
       # setup testing env
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - run:
-          name: Login to DockerHub
-          command: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      #- setup_remote_docker:
+      #    docker_layer_caching: true
+      #- run:
+      #    name: Login to DockerHub
+      #    command: docker login -u $DOCKER_USER -p $DOCKER_PASS
       #     - run:
       #          name: Decrpyt Secrets
       #          command: openssl enc -d -aes-256-ecb -md md5 -in src/main/resources/application-prod.properties.secrets -out src/main/resources/application-prod.properties -k $SECRETS_KEY
@@ -65,14 +65,13 @@ jobs:
 
       ######################   Ravendra  ########################
       # package into a jar
-      - run: mvn clean package
+      #- run: mvn clean package
 
       # build and push docker image to docker hub
-      - run: mvn clean compile jib:build -Dimage=ravendraksingh/spring5-mvc-rest:$CIRCLE_BUILD_NUM
+      #- run: mvn clean compile jib:build -Dimage=ravendraksingh/spring5-mvc-rest:$CIRCLE_BUILD_NUM
 
       # store raw contents of src code
-      - store_artifacts:
-          path: target/classes
-          destination: spring5-mvc-rest
-
+      #- store_artifacts:
+      #    path: target/classes
+      #    destination: spring5-mvc-rest
       ###########################################################
