@@ -1,10 +1,13 @@
 package com.rks.spring5mvcrest.api.vi.model;
 
+
 import lombok.Data;
 
 @Data
-public class CategoryDTO {
+public class CustomerDTO {
 
     private Long id;
-    private String name;
+    private String firstname;
+    private String lastname;
+
 }
